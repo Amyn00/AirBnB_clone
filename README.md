@@ -43,13 +43,13 @@ For detailed information on available commands and their usage, you can use the 
 Here are some examples of how to use the AirBnB Clone command interpreter:
 1. Creating a new property:
 ```bash
-(AirBnB) create Place name="Cozy Cabin" price=150
+(hbnb) create Place name="Cozy Cabin" price=150
 ```
 2. Booking a property:
 ```bash
-(AirBnB) book Place 1 "2023-11-01" "2023-11-05"
+(hbnb) book Place 1 "2023-11-01" "2023-11-05"
 ```
 3. Listing all properties:
 ```bash
-(AirBnB) all Place
+(hbnb) all Place
 ```
