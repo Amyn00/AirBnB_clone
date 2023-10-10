@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """serializes instances to a JSON file and deserializes JSON file
 to instances"""
+from models.base_model import BaseModel
 import json
 import os
 
