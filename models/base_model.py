@@ -29,7 +29,7 @@ class BaseModel:
         """Return the print/str representation of the BaseModel instance."""
         classname = self.__class__.__name__
         return "[{}] ({}) {}".format(classname, self.id, self.__dict__)
-    
+
     def save(self):
         self.update_at = datetime.now()
 
