@@ -3,7 +3,6 @@
 to instances"""
 from models.base_model import BaseModel
 import json
-import os
 
 
 class FileStorage:
@@ -18,31 +17,28 @@ class FileStorage:
 
     def all(self):
         """Return the dictionary __objects."""
-        return self.__objects
+        return FileStorage.__objects
 
     def new(self, obj):
         """Sets in __objects the obj with key <obj class name>.id."""
-        classname = obj.__class__.__name__
-        key = "{}.{}".format(classname, obj.id)
-        slef.__objects[key] = obj
+        class_nm = obj.__class__.__name__
+        FileStorage.__objects["{}.{}".format(class_nm, obj.id)] = obj
 
     def save(self):
         """Serializes __objects to the JSON file (path: __file_path)."""
-        serialized_objects = {}
-        for key, obj in self.__objects.items():
-            serialized_objects[key] = obj.to_dict()
-        with open(self.__file_path, 'w', encoding='utf-8') as file:
-            json.dump(serialized_objects, file)
+        odict = FileStorage.__objects
+        obj_dict = {obj: odict[obj].to_dict() for obj in odict.keys()}
+        with open(FileStorage.__file_path, 'w') as f:
+            json.dump(obj_dict, f)
 
     def reload(self):
         """Deserializes the JSON file to __objects."""
-        if os.path.isfile(self.__file_path):
-            with open(self.__file_path, 'r', encoding='utf-8') as file:
-                try:
-                    loaded_objects = json.load(file)
-                    for key, obj_dict in loaded_objects.items():
-                        class_name, obj_id = key.split('.')
-                        class_obj = models[class_name]
-                        self.__objects[key] = class_obj(**obj_dict)
-                except json.JSONDecodeError:
-                    pass
+        try:
+            with open(FileStorage.__file_path) as f:
+                obj_dict = json.load(f)
+                for o in obj_dict.values():
+                    class_nm = o["__class__"]
+                    del o["__class__"]
+                    self.new(eval(class_nm)(**o))
+        except FileNotFoundError:
+            return
