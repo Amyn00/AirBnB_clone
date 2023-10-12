@@ -1,13 +1,31 @@
 #!/usr/bin/python3
+"""Define the HBnB console"""
 import cmd
 from models import storage
 from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
+    """Class HBNBCommand.
+    Attributes:
+        prompt (str): The command prompt.
+    """
+
     prompt = '(hbnb) '
     __classes = {
-            "BaseModel"
+            "BaseModel",
+            "User",
+            "State",
+            "City",
+            "Amenity",
+            "Place",
+            "Review"
     }
 
     def do_quit(self, arg):
@@ -119,13 +137,13 @@ class HBNBCommand(cmd.Cmd):
                 obj.__dict__[args[2]] = args[3]
         elif type(eval(args[2])) == dict:
             obj = obj_dict["{}.{}".format(args[0], args[1])]
+            cd = obj.__class__.__dict__
             for k, v in eval(args[2]).items():
-                    if (k in obj.__class__.__dict__.keys() and
-                            type(obj.__class__.__dict__[k]) in {str, int, float}):
-                        valtype = type(obj.__class__.__dict__[k])
-                        obj.__dict__[k] = valtype(v)
-                    else:
-                        obj.__dict__[k] = v
+                if (k in cd.keys() and type(cd[k]) in {str, int, float}):
+                    valtype = type(cd[k])
+                    obj.__dict__[k] = valtype(v)
+                else:
+                    obj.__dict__[k] = v
         storage.save()
 
 
