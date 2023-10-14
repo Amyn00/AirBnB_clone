@@ -43,13 +43,16 @@ For detailed information on available commands and their usage, you can use the 
 Here are some examples of how to use the AirBnB Clone command interpreter:
 1. Creating a new property:
 ```bash
-(hbnb) create Place name="Cozy Cabin" price=150
+(hbnb) create BaseModel
+49faff9a-6318-451f-87b6-910505c55907
 ```
-2. Booking a property:
+2. Showing property:
 ```bash
-(hbnb) book Place 1 "2023-11-01" "2023-11-05"
+(hbnb) show BaseModel 49faff9a-6318-451f-87b6-910505c55907
+[BaseModel] (49faff9a-6318-451f-87b6-910505c55907) {'created_at': datetime.datetime(2017, 10, 2, 3, 10, 25, 903293), 'id': '49faff9a-6318-451f-87b6-910505c55907', 'updated_at': datetime.datetime(2017, 10, 2, 3, 10, 25, 903300)}
 ```
 3. Listing all properties:
 ```bash
-(hbnb) all Place
+(hbnb) all BaseModel
+["[BaseModel] (2dd6ef5c-467c-4f82-9521-a772ea7d84e9) {'id': '2dd6ef5c-467c-4f82-9521-a772ea7d84e9', 'created_at': datetime.datetime(2017, 10, 2, 3, 11, 23, 639717), 'updated_at': datetime.datetime(2017, 10, 2, 3, 11, 23, 639724)}", "[BaseModel] (49faff9a-6318-451f-87b6-910505c55907) {'first_name': 'Betty', 'id': '49faff9a-6318-451f-87b6-910505c55907', 'created_at': datetime.datetime(2017, 10, 2, 3, 10, 25, 903293), 'updated_at': datetime.datetime(2017, 10, 2, 3, 11, 3, 49401)}"]
 ```
