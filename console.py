@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-"""Define the HBnB console"""
-import cmd
-from models import storage
+"""serializes instances to a JSON file and deserializes JSON file
+to instances"""
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -9,157 +8,43 @@ from models.city import City
 from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
+import json
 
 
-class HBNBCommand(cmd.Cmd):
-    """Class HBNBCommand.
+class FileStorage:
+    """Represent an abstracted storage engine.
+
     Attributes:
-        prompt (str): The command prompt.
+        __file_path (str): The name of the file to save objects to.
+        __objects (dict): A dictionary of instantiated objects.
     """
+    __file_path = "file.json"
+    __objects = {}
 
-    prompt = '(hbnb) '
-    __classes = {
-            "BaseModel",
-            "User",
-            "State",
-            "City",
-            "Amenity",
-            "Place",
-            "Review"
-    }
+    def all(self):
+        """Return the dictionary __objects."""
+        return FileStorage.__objects
 
-    def do_quit(self, arg):
-        """Quit command to exit the prog"""
-        return True
+    def new(self, obj):
+        """Sets in __objects the obj with key <obj class name>.id."""
+        class_nm = obj.__class__.__name__
+        FileStorage.__objects["{}.{}".format(class_nm, obj.id)] = obj
 
-    def do_EOF(self, arg):
-        """Exit the prog at EOF (Ctrl + D)"""
-        print("")
-        return True
+    def save(self):
+        """Serializes __objects to the JSON file (path: __file_path)."""
+        odict = FileStorage.__objects
+        obj_dict = {obj: odict[obj].to_dict() for obj in odict.keys()}
+        with open(FileStorage.__file_path, 'w') as f:
+            json.dump(obj_dict, f)
 
-    def emptyline(self):
-        """Do nothing on empty input line"""
-        pass
-
-    def do_create(self, arg):
-        """Create a new instance of BaseModel, save it and print the id."""
-        args = arg.split()
-        if not args:
-            print("** class name missing **")
+    def reload(self):
+        """Deserializes the JSON file to __objects."""
+        try:
+            with open(FileStorage.__file_path) as f:
+                obj_dict = json.load(f)
+                for o in obj_dict.values():
+                    class_nm = o["__class__"]
+                    del o["__class__"]
+                    self.new(eval(class_nm)(**o))
+        except FileNotFoundError:
             return
-        if args[0] not in HBNBCommand.__classes:
-            print("** class doesn't exist **")
-        else:
-            print(eval(args[0])().id)
-            storage.save()
-
-    def do_show(self, arg):
-        """Print the string representation of an instance based on the class
-        name and id"""
-        args = arg.split()
-        obj_dict = storage.all()
-        if not args:
-            print("** class name missing **")
-            return
-        if args[0] not in HBNBCommand.__classes:
-            print("** class doesn't exist **")
-        elif len(args) == 1:
-            print("** instance id missing **")
-        elif "{}.{}".format(args[0], args[1]) not in obj_dict:
-            print("** no instance found **")
-        else:
-            print(obj_dict["{}.{}".format(args[0], args[1])])
-
-    def do_destroy(self, arg):
-        """Delete an instance based on the class name and id."""
-        args = arg.split()
-        obj_dict = storage.all()
-        if not args:
-            print("** class name missing **")
-            return
-        if args[0] not in HBNBCommand.__classes:
-            print("** class doesn't exist **")
-        elif len(args) == 1:
-            print("** instance id missing **")
-        elif "{}.{}".format(args[0], args[1]) not in obj_dict.keys():
-            print("** no instance found **")
-        else:
-            del obj_dict["{}.{}".format(args[0], args[1])]
-            storage.save()
-
-    def do_all(self, arg):
-        """Print string representation of all instances based on the
-        class name."""
-        args = arg.split()
-        if len(args) > 0 and args[0] not in HBNBCommand.__classes:
-            print("** class doesn't exist **")
-        else:
-            objl = []
-            for obj in storage.all().values():
-                if len(args) > 0 and args[0] == obj.__class__.__name__:
-                    objl.append(obj.__str__())
-                elif len(args) == 0:
-                    objl.append(obj.__str__())
-            print(objl)
-
-    def do_count(self, arg):
-        """Retrieve the number of instances of class"""
-        args = arg.split()
-        if not args:
-            print("** class name missing **")
-            return
-        class_nm = args[0]
-        if class_nm not in HBNBCommand.__classes:
-            print("** class doesn't exist **")
-            return
-        all_instances = storage.all(class_nm)
-        cnt = len(all_instances)
-        print(cnt)
-
-    def do_update(self, arg):
-        """Update an instance based on the class name and id by adding or
-        updating attribute."""
-        args = arg.split()
-        obj_dict = storage.all()
-        if not args:
-            print("** class name missing **")
-            return
-        if args[0] not in HBNBCommand.__classes:
-            print("** class doesn't exist **")
-            return
-        if len(args) == 1:
-            print("** instance id missing **")
-            return
-        if "{}.{}".format(args[0], args[1]) not in obj_dict.keys():
-            print("** no instance found **")
-            return
-        if len(args) == 2:
-            print("** attribute name missing **")
-            return
-        if len(args) == 3:
-            try:
-                type(eval(args[2])) != dict
-            except NameError:
-                print("** value missing **")
-                return
-        if len(args) == 4:
-            obj = obj_dict["{}.{}".format(args[0], args[1])]
-            if args[2] in obj.__class__.__dict__.keys():
-                valtype = type(obj.__class__.dict__[args[2]])
-                obj.__dict__[args[2]] = valtype(args[3])
-            else:
-                obj.__dict__[args[2]] = args[3]
-        elif type(eval(args[2])) == dict:
-            obj = obj_dict["{}.{}".format(args[0], args[1])]
-            cd = obj.__class__.__dict__
-            for k, v in eval(args[2]).items():
-                if (k in cd.keys() and type(cd[k]) in {str, int, float}):
-                    valtype = type(cd[k])
-                    obj.__dict__[k] = valtype(v)
-                else:
-                    obj.__dict__[k] = v
-        storage.save()
-
-
-if __name__ == '__main__':
-    HBNBCommand().cmdloop()
