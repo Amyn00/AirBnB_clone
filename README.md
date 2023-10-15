@@ -36,7 +36,7 @@ Once the command interpreter is running, you can use various commands to interac
 * `show`: Display details of a property or user.
 * `all`: List all properties or users.
 * `book`: Book a property for a specific date range.
-* `quit` or `exit`: Exit the command interpreter.
+* `quit`: Exit the command interpreter.
 For detailed information on available commands and their usage, you can use the help command within the interpreter.
 
 **Examples**
