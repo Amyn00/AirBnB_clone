@@ -12,6 +12,7 @@ The first step is to “design” / “sketch” / “prototype” each element:
 * Fake contents
 * No Javascript
 * No data loaded from anything
+
 During this project, you will learn how to manipulate HTML and CSS languages. HTML is the structure of your page, it should be the first thing to write. CSS is the styling of your page, the design. I really encourage you to fix your HTML part before starting the styling. Indeed, without any structure, you can’t apply any design.
 
 Before starting, please fork or clone the repository AirBnB_clone from your partner if you were not the owner of the previous project.
@@ -61,4 +62,4 @@ Before starting, please fork or clone the repository AirBnB_clone from your part
 * Current screenshots have been done on `Chrome 56` or more.
 * No cross browsers
 * You have to follow all requirements but some `margin`/`padding` are missing - you should try to fit as much as you can to screenshots
-<img src=""/>
+<img src="https://github.com/Amyn00/AirBnB_clone/blob/master/web_static/images/hbnb_step1.png"/>
